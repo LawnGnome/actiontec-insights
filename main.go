@@ -121,6 +121,14 @@ func main() {
 		log.Fatal("User name must be provided.")
 	}
 
+	// Create our context for interacting with the router. Originally, a context
+	// was created on each tick, but Go seemed to be unable to GC the open file
+	// descriptors for the HTTP client, which is unfortunate.
+	ctx, err := actiontec.NewContext(host)
+	if err != nil {
+		log.Fatalf("Error creating context: %v", err)
+	}
+
 	// Set up a ticker and gather and send data each tick. I haven't bothered
 	// going this in a goroutine with fancy signal handling: you want to kill it,
 	// just kill it via Ctrl-C or kill.
@@ -128,11 +136,9 @@ func main() {
 	for _ = range ticker.C {
 		log.Print("Gathering data...")
 
-		ctx, err := actiontec.NewContext(host)
-		if err != nil {
-			log.Fatalf("Error creating context: %v", err)
-		}
-
+		// We'll re-login every time: it doesn't hurt, and the Actiontec UI seems
+		// to base the logout timeout on when you logged in, not your last
+		// activity.
 		if err := ctx.Login(username, password); err != nil {
 			log.Fatalf("Error logging into router: %v", err)
 		}
@@ -153,5 +159,9 @@ func main() {
 		}
 
 		log.Print("Data inserted.")
+
+		if err := ctx.Logout(); err != nil {
+			log.Printf("Error logging out (will attempt to continue): %v", err)
+		}
 	}
 }

@@ -101,6 +101,19 @@ func (c *Context) Login(username string, password string) error {
 	return err
 }
 
+func (c *Context) Logout() error {
+	resp, err := c.client.PostForm(c.url("/logout.cgi"), url.Values{})
+	if err != nil {
+		return err
+	}
+
+	// There's literally nothing to check here: logout always succeeds.
+	// Immediately close and return nil.
+	resp.Body.Close()
+
+	return nil
+}
+
 // Calls the refresh status page, which is a plain text API. See status.go for
 // more details on how that's parsed.
 func (c *Context) refreshStatus() (string, error) {
