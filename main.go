@@ -155,10 +155,10 @@ func main() {
 
 		log.Print("Sending data to Insights...")
 		if err := insights.Insert(account, apiKey, events); err != nil {
-			log.Fatalf("Error inserting data to Insights: %v", err)
+			log.Printf("Error inserting data to Insights: %v", err)
+		} else {
+			log.Print("Data inserted.")
 		}
-
-		log.Print("Data inserted.")
 
 		if err := ctx.Logout(); err != nil {
 			log.Printf("Error logging out (will attempt to continue): %v", err)
