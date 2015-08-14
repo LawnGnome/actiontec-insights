@@ -152,6 +152,17 @@ func TestStringToLineStats(t *testing.T) {
 				time.Duration(1000) * time.Second,
 			},
 		},
+		{
+			"Up|PTM|10000|2000|9/7|(DS1)26.6 /(US1)13.1, (US2)70.0 |2|1000|0",
+			LineStats{
+				Up,
+				Rates{2000, 10000},
+				UintPair{7, 9},
+				FloatPair{13.1, 26.6},
+				2,
+				time.Duration(1000) * time.Second,
+			},
+		},
 	}
 
 	for _, c := range successCases {

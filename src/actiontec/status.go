@@ -179,7 +179,11 @@ func ParseStatus(input string) (status *Status, err error) {
 // them into structured data.
 
 func stringToAttenuation(s string) (pair FloatPair, err error) {
-	fields := strings.Split(s, " /")
+	// Firmware T2200H-31.128L.03 adds a third field, separated by a comma, which
+	// right now we're not interested in (it appears to be an attempt to add the
+	// encapsulation of line 2, except it's a completely out of range value).
+	// We'll ignore it if present.
+	fields := strings.Split(strings.Split(s, ",")[0], " /")
 	if len(fields) != 2 {
 		err = fmt.Errorf("Unexpected number of fields in a pair: %d", len(fields))
 		return
